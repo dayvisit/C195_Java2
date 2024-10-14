@@ -11,7 +11,7 @@
          <children>
             <VBox prefHeight="250.0" prefWidth="800.0">
                <children>
-                  <Label text="Appointments">
+                  <Label prefHeight="27.0" text="Appointments">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -19,29 +19,17 @@
                         <Insets left="25.0" top="10.0" />
                      </VBox.margin>
                   </Label>
-                  <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="800.0">
+                  <HBox alignment="TOP_RIGHT" maxHeight="52.0" minHeight="25.0" prefHeight="57.0" prefWidth="800.0" spacing="25.0">
                      <children>
-                        <RadioButton mnemonicParsing="false" text="Current Week">
-                           <padding>
-                              <Insets right="20.0" top="30.0" />
-                           </padding>
-                        </RadioButton>
-                        <RadioButton layoutX="132.0" layoutY="20.0" mnemonicParsing="false" text="Current Month">
-                           <padding>
-                              <Insets right="20.0" top="30.0" />
-                           </padding>
-                        </RadioButton>
-                        <RadioButton layoutX="246.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="All Appointments">
-                           <padding>
-                              <Insets right="20.0" top="30.0" />
-                           </padding>
-                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="Current Week" />
+                        <RadioButton layoutX="132.0" layoutY="20.0" mnemonicParsing="false" text="Current Month" />
+                        <RadioButton layoutX="246.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="All Appointments" />
                      </children>
-                     <padding>
-                        <Insets bottom="5.0" />
-                     </padding>
+                     <VBox.margin>
+                        <Insets right="10.0" />
+                     </VBox.margin>
                   </HBox>
-                  <TableView prefHeight="200.0" prefWidth="200.0">
+                  <TableView prefHeight="235.0" prefWidth="200.0">
                     <columns>
                       <TableColumn prefWidth="49.0" text="ID" />
                       <TableColumn prefWidth="87.0" text="Title" />
@@ -72,6 +60,9 @@
                         </Button>
                         <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" text="Delete" />
                      </children>
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
                   </HBox>
                </children>
             </VBox>
