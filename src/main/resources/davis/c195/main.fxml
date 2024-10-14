@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="davis.c195.Main">
+   <children>
+      <VBox prefHeight="500.0" prefWidth="800.0">
+         <children>
+            <VBox prefHeight="250.0" prefWidth="800.0">
+               <children>
+                  <Label text="Appointments">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets left="25.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="25.0" prefWidth="800.0">
+                     <children>
+                        <RadioButton mnemonicParsing="false" text="Current Week">
+                           <padding>
+                              <Insets right="20.0" top="30.0" />
+                           </padding>
+                        </RadioButton>
+                        <RadioButton layoutX="132.0" layoutY="20.0" mnemonicParsing="false" text="Current Month">
+                           <padding>
+                              <Insets right="20.0" top="30.0" />
+                           </padding>
+                        </RadioButton>
+                        <RadioButton layoutX="246.0" layoutY="20.0" mnemonicParsing="false" selected="true" text="All Appointments">
+                           <padding>
+                              <Insets right="20.0" top="30.0" />
+                           </padding>
+                        </RadioButton>
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" />
+                     </padding>
+                  </HBox>
+                  <TableView prefHeight="200.0" prefWidth="200.0">
+                    <columns>
+                      <TableColumn prefWidth="49.0" text="ID" />
+                      <TableColumn prefWidth="87.0" text="Title" />
+                        <TableColumn prefWidth="100.0" text="Description" />
+                        <TableColumn prefWidth="81.0" text="Location" />
+                        <TableColumn prefWidth="70.0" text="Contact" />
+                        <TableColumn prefWidth="63.0" text="Type" />
+                        <TableColumn prefWidth="92.0" text="Start Date and Time" />
+                        <TableColumn prefWidth="86.0" text="End Date and Time" />
+                        <TableColumn prefWidth="86.0" text="Customer ID" />
+                        <TableColumn prefWidth="65.0" text="User ID" />
+                    </columns>
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </TableView>
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" text="Add">
+                           <HBox.margin>
+                              <Insets left="10.0" right="30.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Update">
+                           <HBox.margin>
+                              <Insets right="30.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" text="Delete" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+            <VBox layoutX="10.0" layoutY="10.0" prefHeight="250.0" prefWidth="800.0">
+               <children>
+                  <Label text="Customers">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="25.0" top="10.0" />
+                     </VBox.margin>
+                  </Label>
+                  <TableView maxWidth="600.0" minWidth="700.0" prefHeight="200.0" prefWidth="600.0">
+                     <columns>
+                        <TableColumn prefWidth="49.0" text="ID" />
+                        <TableColumn prefWidth="87.0" text="Name" />
+                        <TableColumn prefWidth="149.0" text="Address" />
+                        <TableColumn prefWidth="157.0" text="Phone Number" />
+                        <TableColumn minWidth="0.0" prefWidth="152.0" text="State/Province" />
+                        <TableColumn minWidth="0.0" prefWidth="105.0" text="Postal Code" />
+                     </columns>
+                     <VBox.margin>
+                        <Insets left="10.0" right="10.0" />
+                     </VBox.margin>
+                  </TableView>
+                  <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <Button mnemonicParsing="false" text="Add">
+                           <HBox.margin>
+                              <Insets left="10.0" right="30.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" text="Update">
+                           <HBox.margin>
+                              <Insets right="30.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="48.0" layoutY="10.0" mnemonicParsing="false" text="Delete">
+                           <HBox.margin>
+                              <Insets right="300.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="173.0" layoutY="10.0" mnemonicParsing="false" text="Reports">
+                           <HBox.margin>
+                              <Insets right="75.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button layoutX="224.0" layoutY="10.0" mnemonicParsing="false" text="Logout" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </children></VBox>
+   </children>
+</AnchorPane>

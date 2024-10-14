@@ -1,4 +1,4 @@
-module davis.c195 {
+module davis.c {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
