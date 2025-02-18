@@ -62,6 +62,7 @@ public class LocationDAO {
         return divisions;
     }
 
+
     /**
      * Gets divisions for a specific country
      * @param countryId country ID to filter by
