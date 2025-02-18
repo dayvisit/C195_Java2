@@ -7,4 +7,6 @@ module davis.c {
 
     opens davis.c195 to javafx.fxml;
     exports davis.c195;
+    exports davis.c195.controller;
+    opens davis.c195.controller to javafx.fxml;
 }
