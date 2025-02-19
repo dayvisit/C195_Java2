@@ -253,7 +253,7 @@ public class MainController implements Initializable {
     }
 
     private void openForm(String fxmlFile, String title) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis.c195/" + fxmlFile));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/" + fxmlFile));
         Parent root = loader.load();
         Stage stage = new Stage();
         stage.setTitle(title);
