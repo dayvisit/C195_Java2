@@ -31,7 +31,6 @@ public class ModifyCustomer implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            // Disable ID field as it shouldn't be modified
             customerIdField.setDisable(true);
 
             // Load countries into combo box
@@ -66,13 +65,16 @@ public class ModifyCustomer implements Initializable {
 
             // Get division and country
             FirstLevelDivision division = LocationDAO.getDivision(customerToModify.getDivisionID());
-            Country country = LocationDAO.getCountry(division.getCountryID());
+            if (division != null) {
+                Country country = LocationDAO.getCountry(division.getCountryID());
+                if (country != null) {
+                    // Set country first (this will trigger division update)
+                    countryComboBox.setValue(country.getCountry());
 
-            // Set country first (this will trigger division update)
-            countryComboBox.setValue(country.getCountry());
-
-            // Set division after divisions are loaded
-            divisionComboBox.setValue(division.getDivisionName());
+                    // Wait briefly for divisions to load then set division
+                    divisionComboBox.setValue(division.getDivisionName());
+                }
+            }
 
         } catch (SQLException e) {
             showAlert("Error", "Failed to load customer data", Alert.AlertType.ERROR);
@@ -107,7 +109,7 @@ public class ModifyCustomer implements Initializable {
 
             showAlert("Success", "Customer updated successfully", Alert.AlertType.INFORMATION);
         } catch (SQLException e) {
-            showAlert("Error", "Failed to update customer", Alert.AlertType.ERROR);
+            showAlert("Error", "Failed to update customer: " + e.getMessage(), Alert.AlertType.ERROR);
         }
     }
 
@@ -115,6 +117,14 @@ public class ModifyCustomer implements Initializable {
     void onCancel(ActionEvent event) {
         if (showConfirmation("Cancel?", "Are you sure you want to cancel? Changes will not be saved.")) {
             closeWindow();
+        }
+    }
+
+    @FXML
+    void onActionCountry(ActionEvent event) {
+        String selectedCountry = countryComboBox.getValue();
+        if (selectedCountry != null) {
+            updateDivisions(selectedCountry);
         }
     }
 

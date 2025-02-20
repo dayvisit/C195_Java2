@@ -67,7 +67,7 @@ public class MainController implements Initializable {
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
-        contactCol.setCellValueFactory(new PropertyValueFactory<>("contactId")); // You might want to convert this to contact name
+        contactCol.setCellValueFactory(new PropertyValueFactory<>("contactId"));
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
         startCol.setCellValueFactory(new PropertyValueFactory<>("start"));
         endCol.setCellValueFactory(new PropertyValueFactory<>("end"));
@@ -79,7 +79,7 @@ public class MainController implements Initializable {
         customerNameCol.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        divisionCol.setCellValueFactory(new PropertyValueFactory<>("divisionID")); // You might want to convert this to division name
+        divisionCol.setCellValueFactory(new PropertyValueFactory<>("divisionID"));
         postalCodeCol.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
 
         // Load initial data
@@ -119,10 +119,16 @@ public class MainController implements Initializable {
     @FXML
     void onAddAppointment(ActionEvent event) {
         try {
-            openForm("AddAppointment.fxml", "Add Appointment");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/AddAppointment.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Add Appointment");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
             refreshAppointmentTable();
         } catch (IOException e) {
-            showAlert("Error", "Could not open add appointment form", Alert.AlertType.ERROR);
+            showAlert("Error", "Could not open add appointment form: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
 
@@ -135,10 +141,20 @@ public class MainController implements Initializable {
         }
 
         try {
-            openForm("ModifyAppointment.fxml", "Update Appointment");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/ModifyAppointment.fxml"));
+            Parent root = loader.load();
+
+            ModifyAppointment controller = loader.getController();
+            controller.setAppointment(selected);
+
+            Stage stage = new Stage();
+            stage.setTitle("Update Appointment");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
             refreshAppointmentTable();
         } catch (IOException e) {
-            showAlert("Error", "Could not open update appointment form", Alert.AlertType.ERROR);
+            showAlert("Error", "Could not open update appointment form: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
 
@@ -163,10 +179,16 @@ public class MainController implements Initializable {
     @FXML
     void onAddCustomer(ActionEvent event) {
         try {
-            openForm("AddCustomer.fxml", "Add Customer");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/AddCustomer.fxml"));
+            Parent root = loader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Add Customer");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
             refreshCustomerTable();
         } catch (IOException e) {
-            showAlert("Error", "Could not open add customer form", Alert.AlertType.ERROR);
+            showAlert("Error", "Could not open add customer form: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
 
@@ -179,10 +201,18 @@ public class MainController implements Initializable {
         }
 
         try {
-            openForm("ModifyCustomer.fxml", "Update Customer");
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/ModifyCustomer.fxml"));
+            Parent root = loader.load();
+            ModifyCustomer controller = loader.getController();
+            controller.setCustomer(selected);
+            Stage stage = new Stage();
+            stage.setTitle("Update Customer");
+            stage.setScene(new Scene(root));
+            stage.showAndWait();
             refreshCustomerTable();
         } catch (IOException e) {
-            showAlert("Error", "Could not open update customer form", Alert.AlertType.ERROR);
+            showAlert("Error", "Could not open update customer form: " + e.getMessage(), Alert.AlertType.ERROR);
+            e.printStackTrace();
         }
     }
 
@@ -211,23 +241,15 @@ public class MainController implements Initializable {
     @FXML
     void onLogout(ActionEvent event) {
         try {
-            // Get the current stage
             Stage currentStage = (Stage) logoutBtn.getScene().getWindow();
-
-            // Create and show the login screen
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/login.fxml"));
             Parent root = loader.load();
             Stage loginStage = new Stage();
             loginStage.setTitle("Login");
             loginStage.setScene(new Scene(root));
             loginStage.show();
-
-            // Close the dashboard
             currentStage.close();
-
-            // Clear any session data if needed
             UserDAO.setCurrentUser(null);
-
         } catch (IOException e) {
             showAlert("Error", "Could not return to login screen", Alert.AlertType.ERROR);
         }
