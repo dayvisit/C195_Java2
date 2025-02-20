@@ -254,6 +254,25 @@ public class MainController implements Initializable {
             showAlert("Error", "Could not return to login screen", Alert.AlertType.ERROR);
         }
     }
+    @FXML
+    void onReports(ActionEvent event) {
+        try {
+            // Get the current stage
+            Stage currentStage = (Stage) reportsBtn.getScene().getWindow();
+
+            // Load the reports view
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/Reports.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+
+            // Set the scene on the current stage
+            currentStage.setScene(scene);
+            currentStage.setTitle("Reports");
+            currentStage.show();
+        } catch (IOException e) {
+            showAlert("Error", "Could not open reports form", Alert.AlertType.ERROR);
+        }
+    }
 
     // Helper Methods
     private void refreshAppointmentTable() {

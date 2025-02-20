@@ -56,7 +56,10 @@ public class Contact {
     public String getEmail() {
         return email;
     }
-
+    @Override
+    public String toString() {
+        return contactName; // This will display just the contact name in the ComboBox
+    }
     /**
      * @param email email address
      */

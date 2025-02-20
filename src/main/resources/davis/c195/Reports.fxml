@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="davis.c195.controller.ReportsController">
+    <VBox spacing="20" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <padding>
+            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+        </padding>
+        <children>
+            <!-- Title -->
+            <Label text="Reports" style="-fx-font-size: 24;">
+                <font>
+                    <Font name="System Bold" size="24.0" />
+                </font>
+            </Label>
+
+            <!-- Report 1: Appointments by Type and Month -->
+            <VBox spacing="10">
+                <Label text="Appointments by Type and Month" style="-fx-font-size: 18;" />
+                <TableView fx:id="typeMonthTable" prefHeight="150.0">
+                    <columns>
+                        <TableColumn fx:id="typeCol" text="Type" />
+                        <TableColumn fx:id="monthCol" text="Month" />
+                        <TableColumn fx:id="countCol" text="Count" />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Report 2: Contact Schedule -->
+            <VBox spacing="10">
+                <Label text="Contact Schedule" style="-fx-font-size: 18;" />
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label text="Select Contact:" />
+                    <ComboBox fx:id="contactComboBox" />
+                </HBox>
+                <TableView fx:id="contactScheduleTable" prefHeight="150.0">
+                    <columns>
+                        <TableColumn fx:id="appointmentIdCol" text="Appointment ID" />
+                        <TableColumn fx:id="titleCol" text="Title" />
+                        <TableColumn fx:id="typeScheduleCol" text="Type" />
+                        <TableColumn fx:id="descriptionCol" text="Description" />
+                        <TableColumn fx:id="startCol" text="Start" />
+                        <TableColumn fx:id="endCol" text="End" />
+                        <TableColumn fx:id="customerIdCol" text="Customer ID" />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Report 3: Customer Appointment Totals -->
+            <VBox spacing="10">
+                <Label text="Customer Appointment Totals" style="-fx-font-size: 18;" />
+                <TableView fx:id="customerTotalsTable" prefHeight="150.0">
+                    <columns>
+                        <TableColumn fx:id="customerCol" text="Customer" />
+                        <TableColumn fx:id="totalAppointmentsCol" text="Total Appointments" />
+                    </columns>
+                </TableView>
+            </VBox>
+
+            <!-- Back Button -->
+            <Button fx:id="backButton" mnemonicParsing="false" onAction="#onActionBack" text="Back" />
+        </children>
+    </VBox>
+</AnchorPane>

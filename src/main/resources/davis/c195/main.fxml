@@ -110,7 +110,7 @@
                               <Insets right="300.0" />
                            </HBox.margin>
                         </Button>
-                        <Button fx:id="reportsBtn" layoutX="173.0" layoutY="10.0" mnemonicParsing="false" text="Reports">
+                        <Button fx:id="reportsBtn" layoutX="173.0" layoutY="10.0" mnemonicParsing="false" onAction="#onReports" text="Reports" >
                            <HBox.margin>
                               <Insets right="75.0" />
                            </HBox.margin>
