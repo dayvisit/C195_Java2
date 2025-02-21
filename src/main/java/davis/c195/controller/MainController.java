@@ -1,10 +1,8 @@
 package davis.c195.controller;
 
-import davis.c195.DAO.AppointmentDAO;
-import davis.c195.DAO.CustomerDAO;
-import davis.c195.DAO.UserDAO;
-import davis.c195.model.Appointment;
-import davis.c195.model.Customer;
+import davis.c195.DAO.*;
+import davis.c195.model.*;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -67,7 +65,14 @@ public class MainController implements Initializable {
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
         descriptionCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         locationCol.setCellValueFactory(new PropertyValueFactory<>("location"));
-        contactCol.setCellValueFactory(new PropertyValueFactory<>("contactId"));
+        contactCol.setCellValueFactory(data -> {
+            try {
+                Contact contact = ContactDAO.getContact(data.getValue().getContactId());
+                return new SimpleStringProperty(contact != null ? contact.getContactName() : "");
+            } catch (SQLException e) {
+                return new SimpleStringProperty("");
+            }
+        });
         typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
         startCol.setCellValueFactory(new PropertyValueFactory<>("start"));
         endCol.setCellValueFactory(new PropertyValueFactory<>("end"));
@@ -79,7 +84,19 @@ public class MainController implements Initializable {
         customerNameCol.setCellValueFactory(new PropertyValueFactory<>("customerName"));
         addressCol.setCellValueFactory(new PropertyValueFactory<>("address"));
         phoneCol.setCellValueFactory(new PropertyValueFactory<>("phone"));
-        divisionCol.setCellValueFactory(new PropertyValueFactory<>("divisionID"));
+        divisionCol.setCellValueFactory(data -> {
+            try {
+                FirstLevelDivision division = LocationDAO.getDivision(data.getValue().getDivisionID());
+                if (division != null) {
+                    Country country = LocationDAO.getCountry(division.getCountryID());
+                    return new SimpleStringProperty(division.getDivisionName() +
+                            (country != null ? ", " + country.getCountry() : ""));
+                }
+                return new SimpleStringProperty("");
+            } catch (SQLException e) {
+                return new SimpleStringProperty("");
+            }
+        });
         postalCodeCol.setCellValueFactory(new PropertyValueFactory<>("postalCode"));
 
         // Load initial data
@@ -128,7 +145,6 @@ public class MainController implements Initializable {
             refreshAppointmentTable();
         } catch (IOException e) {
             showAlert("Error", "Could not open add appointment form: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
@@ -154,7 +170,6 @@ public class MainController implements Initializable {
             refreshAppointmentTable();
         } catch (IOException e) {
             showAlert("Error", "Could not open update appointment form: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
@@ -166,10 +181,15 @@ public class MainController implements Initializable {
             return;
         }
 
+        if (!showConfirmation("Delete Appointment", "Are you sure you want to delete this appointment?")) {
+            return;
+        }
+
         try {
             AppointmentDAO.delete(selected.getAppointmentId());
             refreshAppointmentTable();
-            showAlert("Success", "Appointment deleted successfully", Alert.AlertType.INFORMATION);
+            showAlert("Success", "Appointment deleted successfully\nAppointment ID: " +
+                    selected.getAppointmentId() + "\nType: " + selected.getType(), Alert.AlertType.INFORMATION);
         } catch (SQLException e) {
             showAlert("Error", "Could not delete appointment", Alert.AlertType.ERROR);
         }
@@ -188,7 +208,6 @@ public class MainController implements Initializable {
             refreshCustomerTable();
         } catch (IOException e) {
             showAlert("Error", "Could not open add customer form: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
@@ -212,7 +231,6 @@ public class MainController implements Initializable {
             refreshCustomerTable();
         } catch (IOException e) {
             showAlert("Error", "Could not open update customer form: " + e.getMessage(), Alert.AlertType.ERROR);
-            e.printStackTrace();
         }
     }
 
@@ -230,6 +248,10 @@ public class MainController implements Initializable {
                 return;
             }
 
+            if (!showConfirmation("Delete Customer", "Are you sure you want to delete this customer?")) {
+                return;
+            }
+
             CustomerDAO.deleteCustomer(selected.getCustomerID());
             refreshCustomerTable();
             showAlert("Success", "Customer deleted successfully", Alert.AlertType.INFORMATION);
@@ -239,8 +261,27 @@ public class MainController implements Initializable {
     }
 
     @FXML
+    void onReports(ActionEvent event) {
+        try {
+            Stage currentStage = (Stage) reportsBtn.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/Reports.fxml"));
+            Parent root = loader.load();
+            Scene scene = new Scene(root);
+            currentStage.setScene(scene);
+            currentStage.setTitle("Reports");
+            currentStage.show();
+        } catch (IOException e) {
+            showAlert("Error", "Could not open reports form", Alert.AlertType.ERROR);
+        }
+    }
+
+    @FXML
     void onLogout(ActionEvent event) {
         try {
+            if (!showConfirmation("Logout", "Are you sure you want to logout?")) {
+                return;
+            }
+
             Stage currentStage = (Stage) logoutBtn.getScene().getWindow();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/login.fxml"));
             Parent root = loader.load();
@@ -252,25 +293,6 @@ public class MainController implements Initializable {
             UserDAO.setCurrentUser(null);
         } catch (IOException e) {
             showAlert("Error", "Could not return to login screen", Alert.AlertType.ERROR);
-        }
-    }
-    @FXML
-    void onReports(ActionEvent event) {
-        try {
-            // Get the current stage
-            Stage currentStage = (Stage) reportsBtn.getScene().getWindow();
-
-            // Load the reports view
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/Reports.fxml"));
-            Parent root = loader.load();
-            Scene scene = new Scene(root);
-
-            // Set the scene on the current stage
-            currentStage.setScene(scene);
-            currentStage.setTitle("Reports");
-            currentStage.show();
-        } catch (IOException e) {
-            showAlert("Error", "Could not open reports form", Alert.AlertType.ERROR);
         }
     }
 
@@ -293,19 +315,17 @@ public class MainController implements Initializable {
         }
     }
 
-    private void openForm(String fxmlFile, String title) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/davis/c195/" + fxmlFile));
-        Parent root = loader.load();
-        Stage stage = new Stage();
-        stage.setTitle(title);
-        stage.setScene(new Scene(root));
-        stage.show();
-    }
-
     private void showAlert(String title, String content, Alert.AlertType type) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
         alert.setContentText(content);
         alert.showAndWait();
+    }
+
+    private boolean showConfirmation(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setContentText(content);
+        return alert.showAndWait().get() == ButtonType.OK;
     }
 }

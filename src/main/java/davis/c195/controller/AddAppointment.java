@@ -1,6 +1,7 @@
 package davis.c195.controller;
 
 import davis.c195.DAO.*;
+import davis.c195.helpers.AppointmentValidation;
 import davis.c195.model.Appointment;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -100,6 +101,18 @@ public class AddAppointment implements Initializable {
             // Get start and end times
             LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+
+            // Check for overlapping appointments
+            if (!AppointmentValidation.isValidAppointmentTime(
+                    AppointmentDAO.getAllAppointments(),
+                    customerId,
+                    startDateTime,
+                    endDateTime)) {
+                showAlert("Scheduling Error",
+                        "This customer already has an overlapping appointment scheduled.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
 
             // Create new appointment
             Appointment newAppointment = new Appointment(

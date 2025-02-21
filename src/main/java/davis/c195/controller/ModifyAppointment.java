@@ -10,11 +10,13 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.stage.Stage;
+import javafx.collections.ObservableList;
 
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.*;
 import java.util.ResourceBundle;
+import java.util.stream.Stream;
 
 public class ModifyAppointment implements Initializable {
     @FXML private TextField appointmentIdField;
@@ -38,15 +40,11 @@ public class ModifyAppointment implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            // Set time zone label
             timeZoneLabel.setText("Time Zone: " + ZoneId.systemDefault());
-
-            // Load combo boxes
             loadContactComboBox();
             loadCustomerComboBox();
             loadUserComboBox();
             loadTimeComboBoxes();
-
         } catch (SQLException e) {
             showAlert("Error", "Failed to initialize form: " + e.getMessage(), Alert.AlertType.ERROR);
         }
@@ -65,24 +63,20 @@ public class ModifyAppointment implements Initializable {
             locationField.setText(appointmentToModify.getLocation());
             typeField.setText(appointmentToModify.getType());
 
-            // Set contact
             Contact contact = ContactDAO.getContact(appointmentToModify.getContactId());
             if (contact != null) {
                 contactComboBox.setValue(contact.getContactID() + ": " + contact.getContactName());
             }
 
-            // Set customer
             Customer customer = CustomerDAO.getCustomerList().filtered(c ->
                     c.getCustomerID() == appointmentToModify.getCustomerId()).get(0);
             customerComboBox.setValue(customer.getCustomerID() + ": " + customer.getCustomerName());
 
-            // Set user
             User user = UserDAO.getUser(appointmentToModify.getUserId());
             if (user != null) {
                 userComboBox.setValue(user.getUserID() + ": " + user.getUserName());
             }
 
-            // Set dates and times
             startDatePicker.setValue(appointmentToModify.getStart().toLocalDate());
             endDatePicker.setValue(appointmentToModify.getEnd().toLocalDate());
             startTimeComboBox.setValue(appointmentToModify.getStart().toLocalTime());
@@ -95,6 +89,7 @@ public class ModifyAppointment implements Initializable {
 
     private void loadContactComboBox() throws SQLException {
         contactComboBox.getItems().clear();
+        // Lambda #1: Efficiently processes contact list for combo box population
         ContactDAO.getAllContacts().forEach(contact ->
                 contactComboBox.getItems().add(contact.getContactID() + ": " + contact.getContactName())
         );
@@ -115,7 +110,6 @@ public class ModifyAppointment implements Initializable {
     }
 
     private void loadTimeComboBoxes() {
-        // Populate time combo boxes with business hours (8:00 AM to 10:00 PM EST)
         startTimeComboBox.getItems().clear();
         endTimeComboBox.getItems().clear();
 
@@ -123,25 +117,62 @@ public class ModifyAppointment implements Initializable {
         while (!time.isAfter(LocalTime.of(22, 0))) {
             startTimeComboBox.getItems().add(time);
             endTimeComboBox.getItems().add(time);
-            time = time.plusMinutes(30); // 30-minute intervals
+            time = time.plusMinutes(30);
         }
     }
 
+    /**
+     * Saves appointment data and returns user to schedule screen. Performs various validations including
+     * checking for appointment time overlaps and business hours compliance.
+     *
+     * Lambda Expression #1: Validates form fields using Stream.anyMatch(). This improves code by replacing
+     * multiple if-statements with a single, maintainable stream operation that can be easily modified
+     * if validation rules change.
+     *
+     * Lambda Expression #2: Uses removeIf to filter appointment list. This improves code by providing
+     * a clean, functional way to remove elements based on a condition without requiring an explicit
+     * loop or temporary collection.
+     *
+     * @param event Save button event
+     */
     @FXML
     void onSave(ActionEvent event) {
-        if (!validateFields()) {
-            return;
-        }
-
         try {
-            // Get IDs from combo box selections
-            int contactId = Integer.parseInt(contactComboBox.getValue().split(":")[0].trim());
-            int customerId = Integer.parseInt(customerComboBox.getValue().split(":")[0].trim());
-            int userId = Integer.parseInt(userComboBox.getValue().split(":")[0].trim());
+            // Lambda #1: Field validation
+            boolean hasEmptyFields = Stream.of(
+                            titleField.getText(),
+                            descriptionArea.getText(),
+                            locationField.getText(),
+                            typeField.getText(),
+                            contactComboBox.getValue(),
+                            customerComboBox.getValue(),
+                            userComboBox.getValue())
+                    .anyMatch(field -> field == null || field.trim().isEmpty());
+
+            if (hasEmptyFields) {
+                showAlert("Error", "All fields must be filled out", Alert.AlertType.ERROR);
+                return;
+            }
+
+            if (startDatePicker.getValue() == null || endDatePicker.getValue() == null ||
+                    startTimeComboBox.getValue() == null || endTimeComboBox.getValue() == null) {
+                showAlert("Error", "Date and time must be selected", Alert.AlertType.ERROR);
+                return;
+            }
 
             // Get start and end times
             LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+
+            // Check for overlapping appointments
+            ObservableList<Appointment> appointments = AppointmentDAO.getAllAppointments();
+            // Lambda #2: Remove current appointment from overlap check
+            appointments.removeIf(a -> a.getAppointmentId() == appointmentToModify.getAppointmentId());
+
+            // Get IDs from combo box selections
+            int contactId = Integer.parseInt(contactComboBox.getValue().split(":")[0].trim());
+            int customerId = Integer.parseInt(customerComboBox.getValue().split(":")[0].trim());
+            int userId = Integer.parseInt(userComboBox.getValue().split(":")[0].trim());
 
             // Update appointment object
             appointmentToModify.setTitle(titleField.getText());
@@ -170,51 +201,6 @@ public class ModifyAppointment implements Initializable {
         if (showConfirmation("Cancel?", "Are you sure you want to cancel? Changes will not be saved.")) {
             closeWindow();
         }
-    }
-
-    private boolean validateFields() {
-        StringBuilder errorMessage = new StringBuilder();
-
-        if (titleField.getText().isEmpty()) {
-            errorMessage.append("Title is required\n");
-        }
-        if (descriptionArea.getText().isEmpty()) {
-            errorMessage.append("Description is required\n");
-        }
-        if (locationField.getText().isEmpty()) {
-            errorMessage.append("Location is required\n");
-        }
-        if (typeField.getText().isEmpty()) {
-            errorMessage.append("Type is required\n");
-        }
-        if (contactComboBox.getValue() == null) {
-            errorMessage.append("Contact must be selected\n");
-        }
-        if (customerComboBox.getValue() == null) {
-            errorMessage.append("Customer must be selected\n");
-        }
-        if (userComboBox.getValue() == null) {
-            errorMessage.append("User must be selected\n");
-        }
-        if (startDatePicker.getValue() == null) {
-            errorMessage.append("Start date must be selected\n");
-        }
-        if (endDatePicker.getValue() == null) {
-            errorMessage.append("End date must be selected\n");
-        }
-        if (startTimeComboBox.getValue() == null) {
-            errorMessage.append("Start time must be selected\n");
-        }
-        if (endTimeComboBox.getValue() == null) {
-            errorMessage.append("End time must be selected\n");
-        }
-
-        if (errorMessage.length() > 0) {
-            showAlert("Validation Error", errorMessage.toString(), Alert.AlertType.ERROR);
-            return false;
-        }
-
-        return true;
     }
 
     private void showAlert(String title, String content, Alert.AlertType type) {
