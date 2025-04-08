@@ -20,7 +20,7 @@ This application is a GUI-based scheduling desktop application that helps manage
 2. Set up a MySQL database using the provided schema
 3. Configure the database connection in DBConnection.java with your database credentials
 4. Launch the application through your IDE or build and run the JAR file
-5. Log in using valid credentials
+5. Log in using valid credentials (test/test)
 6. Navigate through the application using the menu options to:
    - View and manage customer records
    - Schedule and modify appointments

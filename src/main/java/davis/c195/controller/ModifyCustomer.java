@@ -28,6 +28,16 @@ public class ModifyCustomer implements Initializable {
 
     private Customer customerToModify;
 
+    /**
+     * Initializes the controller class with combo box listeners and country data.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently load all countries into the country combo box.
+     * This improves code by providing a more concise and readable approach to populating the combo box
+     * compared to traditional iteration methods.
+     *</p>
+     * @param url The location used to resolve relative paths
+     * @param rb The resource bundle for localization
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -128,6 +138,15 @@ public class ModifyCustomer implements Initializable {
         }
     }
 
+    /**
+     * Updates the division combo box based on selected country.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently populate the division combo box
+     * with divisions filtered by the selected country. This improves code by simplifying
+     * the iteration logic and making it more maintainable.
+     *</p>
+     * @param countryName The name of the selected country
+     */
     private void updateDivisions(String countryName) {
         try {
             divisionComboBox.getItems().clear();

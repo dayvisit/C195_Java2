@@ -50,6 +50,7 @@ public class ReportsController implements Initializable {
     private static final String[] MONTHS = {"January", "February", "March", "April", "May", "June",
             "July", "August", "September", "October", "November", "December"};
 
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setupTypeMonthTable();
@@ -58,6 +59,24 @@ public class ReportsController implements Initializable {
         loadAllReports();
     }
 
+    /**
+     * Sets up the type and month table with appropriate column mappings.
+     *<p>
+     * Lambda Expression #1: Uses lambda in typeCol.setCellValueFactory to extract and display
+     * the appointment type from the composite map key. This improves code by enabling direct
+     * string manipulation within the cell factory.
+     *</p>
+     *<p>
+     * Lambda Expression #2: Uses lambda in monthCol.setCellValueFactory to convert numeric
+     * month values to month names. This improves code by providing a clean way to transform
+     * data for display without separate formatting methods.
+     *</p>
+     *<p>
+     * Lambda Expression #3: Uses lambda in countCol.setCellValueFactory to convert the Integer
+     * count value into a property that can be displayed. This improves code by simplifying
+     * the process of making non-property data observable.
+     *</p>
+     */
     private void setupTypeMonthTable() {
         typeCol.setCellValueFactory(data -> {
             String[] parts = data.getValue().getKey().split("-");
@@ -74,6 +93,19 @@ public class ReportsController implements Initializable {
                 new SimpleIntegerProperty(data.getValue().getValue()).asObject());
     }
 
+    /**
+     * Sets up the contact schedule table with appropriate column mappings.
+     *<p>
+     * Lambda Expression #1: Uses lambda in contactComboBox.setOnAction to trigger the
+     * loadContactSchedule method when a contact is selected. This improves code by providing
+     * a clean event handling mechanism without requiring a separate handler method.
+     *</p>
+     *<p>
+     * Lambda Expression #2-8: Uses lambdas in setCellValueFactory calls to convert appointment
+     * data to appropriate property types for display. This improves code by allowing direct
+     * transformation of data within the cell factories and reducing the amount of boilerplate code.
+     *</p>
+     */
     private void setupContactScheduleTable() {
         try {
             // Populate contact combo box
@@ -100,6 +132,19 @@ public class ReportsController implements Initializable {
         }
     }
 
+    /**
+     * Sets up the customer totals table with appropriate column mappings.
+     *<p>
+     * Lambda Expression #1: Uses lambda in customerCol.setCellValueFactory to dynamically retrieve
+     * and format customer names from their IDs. This improves code by allowing direct data
+     * transformation within the cell factory instead of requiring a separate formatting method.
+     *</p>
+     *<p>
+     * Lambda Expression #2: Uses lambda in totalAppointmentsCol.setCellValueFactory to transform
+     * the raw map entry values into table cell data. This improves code by providing an efficient
+     * way to convert data between different formats without additional helper methods.
+     *</p>
+     */
     private void setupCustomerTotalsTable() {
         customerCol.setCellValueFactory(data -> {
             try {

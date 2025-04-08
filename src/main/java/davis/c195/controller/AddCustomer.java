@@ -26,6 +26,16 @@ public class AddCustomer implements Initializable {
     @FXML private Button saveButton;
     @FXML private Button cancelButton;
 
+    /**
+     * Initializes the controller class with default values and combo box data.
+     *<p>
+     * Lambda Expression: Uses forEach to populate the country combo box efficiently.
+     * This improves code by providing a cleaner, more functional approach to iterating
+     * through countries compared to traditional for loops.
+     *</p>
+     * @param url The location used to resolve relative paths
+     * @param rb The resource bundle for localization
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {

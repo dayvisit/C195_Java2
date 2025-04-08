@@ -58,6 +58,19 @@ public class MainController implements Initializable {
     @FXML private Button reportsBtn;
     @FXML private Button logoutBtn;
 
+    /**
+     * Initializes the controller class and sets up all tables and controls.
+     *<p>
+     * Lambda Expression #1: Uses lambda in contactCol.setCellValueFactory to dynamically fetch
+     * and display contact names based on contact IDs. This improves code by enabling direct data
+     * lookup and transformation within the table display logic.
+     *</p>
+     * <p>
+     * Lambda Expression #2: Uses lambda in divisionCol.setCellValueFactory to format division
+     * and country information for display. This improves code by combining multiple database
+     * lookups into a single operation that produces formatted output.
+     * </p>
+     */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // Initialize appointment table columns

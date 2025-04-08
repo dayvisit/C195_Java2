@@ -1,6 +1,7 @@
 package davis.c195.controller;
 
 import davis.c195.DAO.*;
+import davis.c195.helpers.AppointmentValidation;
 import davis.c195.model.Appointment;
 import davis.c195.model.Contact;
 import davis.c195.model.Customer;
@@ -36,6 +37,7 @@ public class ModifyAppointment implements Initializable {
     @FXML private Button cancelButton;
 
     private Appointment appointmentToModify;
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -87,9 +89,17 @@ public class ModifyAppointment implements Initializable {
         }
     }
 
+    /**
+     * Loads contact data into the contact combo box.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently process each contact and add it to the combo box.
+     * This improves code by eliminating the need for explicit iteration and index tracking,
+     * resulting in more concise and readable code.
+     *</p>
+     * @throws SQLException if database access error occurs
+     */
     private void loadContactComboBox() throws SQLException {
         contactComboBox.getItems().clear();
-        // Lambda #1: Efficiently processes contact list for combo box population
         ContactDAO.getAllContacts().forEach(contact ->
                 contactComboBox.getItems().add(contact.getContactID() + ": " + contact.getContactName())
         );
@@ -102,6 +112,14 @@ public class ModifyAppointment implements Initializable {
         );
     }
 
+    /**
+     * Loads user data into the user combo box.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently populate the combo box with user data.
+     * This improves code readability and reduces line count compared to traditional for loops.
+     *</p>
+     * @throws SQLException if database access error occurs
+     */
     private void loadUserComboBox() throws SQLException {
         userComboBox.getItems().clear();
         UserDAO.getAllUsers().forEach(user ->
@@ -124,15 +142,16 @@ public class ModifyAppointment implements Initializable {
     /**
      * Saves appointment data and returns user to schedule screen. Performs various validations including
      * checking for appointment time overlaps and business hours compliance.
-     *
+     *<p>
      * Lambda Expression #1: Validates form fields using Stream.anyMatch(). This improves code by replacing
      * multiple if-statements with a single, maintainable stream operation that can be easily modified
      * if validation rules change.
-     *
+     *</p>
+     *<p>
      * Lambda Expression #2: Uses removeIf to filter appointment list. This improves code by providing
      * a clean, functional way to remove elements based on a condition without requiring an explicit
      * loop or temporary collection.
-     *
+     *</p>
      * @param event Save button event
      */
     @FXML
@@ -160,19 +179,37 @@ public class ModifyAppointment implements Initializable {
                 return;
             }
 
+            // Get IDs from combo box selections
+            int contactId = Integer.parseInt(contactComboBox.getValue().split(":")[0].trim());
+            int customerId = Integer.parseInt(customerComboBox.getValue().split(":")[0].trim());
+            int userId = Integer.parseInt(userComboBox.getValue().split(":")[0].trim());
+
             // Get start and end times
             LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
 
             // Check for overlapping appointments
             ObservableList<Appointment> appointments = AppointmentDAO.getAllAppointments();
-            // Lambda #2: Remove current appointment from overlap check
-            appointments.removeIf(a -> a.getAppointmentId() == appointmentToModify.getAppointmentId());
 
-            // Get IDs from combo box selections
-            int contactId = Integer.parseInt(contactComboBox.getValue().split(":")[0].trim());
-            int customerId = Integer.parseInt(customerComboBox.getValue().split(":")[0].trim());
-            int userId = Integer.parseInt(userComboBox.getValue().split(":")[0].trim());
+            // Check for appointment time validity (business hours)
+            AppointmentValidation AppointmentValidation = null;
+            if (!AppointmentValidation.isWithinBusinessHours(startDateTime, endDateTime)) {
+                showAlert("Error", "Appointment must be scheduled within business hours (8:00 AM to 10:00 PM EST), Monday through Friday",
+                        Alert.AlertType.ERROR);
+                return;
+            }
+
+            // Check for customer appointment overlaps, excluding the current appointment
+            if (!AppointmentValidation.isValidAppointmentTime(
+                    appointments,
+                    customerId,
+                    startDateTime,
+                    endDateTime,
+                    appointmentToModify.getAppointmentId())) {
+                showAlert("Error", "This appointment overlaps with another appointment for the same customer",
+                        Alert.AlertType.ERROR);
+                return;
+            }
 
             // Update appointment object
             appointmentToModify.setTitle(titleField.getText());

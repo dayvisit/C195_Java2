@@ -31,6 +31,7 @@ public class AddAppointment implements Initializable {
     @FXML private Button saveButton;
     @FXML private Button cancelButton;
 
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
@@ -52,6 +53,14 @@ public class AddAppointment implements Initializable {
         }
     }
 
+    /**
+     * Loads all contacts into the contact combo box.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently iterate through each contact and add it to the combo box.
+     * This improves code by eliminating boilerplate loop code and making the population logic more concise.
+     *</p>
+     * @throws SQLException if database access error occurs
+     */
     private void loadContactComboBox() throws SQLException {
         contactComboBox.getItems().clear();
         ContactDAO.getAllContacts().forEach(contact ->
@@ -59,6 +68,14 @@ public class AddAppointment implements Initializable {
         );
     }
 
+    /**
+     * Loads all customers into the customer combo box.
+     *<p>
+     * Lambda Expression: Uses forEach to streamline the process of adding customers to the combo box.
+     * This improves code by reducing complexity and making the code more maintainable.
+     *</p>
+     * @throws SQLException if database access error occurs
+     */
     private void loadCustomerComboBox() throws SQLException {
         customerComboBox.getItems().clear();
         CustomerDAO.getCustomerList().forEach(customer ->
@@ -66,6 +83,15 @@ public class AddAppointment implements Initializable {
         );
     }
 
+    /**
+     * Loads all users into the user combo box.
+     *<p>
+     * Lambda Expression: Uses forEach to efficiently populate the combo box with users.
+     * This improves code by providing a functional approach to iteration that's more concise
+     * than traditional loop structures.
+     *</p>
+     * @throws SQLException if database access error occurs
+     */
     private void loadUserComboBox() throws SQLException {
         userComboBox.getItems().clear();
         UserDAO.getAllUsers().forEach(user ->
@@ -101,6 +127,14 @@ public class AddAppointment implements Initializable {
             // Get start and end times
             LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
             LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+
+            // Check if appointment is within business hours
+            if (!AppointmentValidation.isWithinBusinessHours(startDateTime, endDateTime)) {
+                showAlert("Scheduling Error",
+                        "Appointments must be within business hours (8:00 AM to 10:00 PM EST), Monday through Friday.",
+                        Alert.AlertType.ERROR);
+                return;
+            }
 
             // Check for overlapping appointments
             if (!AppointmentValidation.isValidAppointmentTime(
