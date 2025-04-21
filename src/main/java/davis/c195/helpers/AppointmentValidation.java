@@ -32,13 +32,6 @@ public class AppointmentValidation {
         ZonedDateTime estStartZDT = startZDT.withZoneSameInstant(EST_ZONE);
         ZonedDateTime estEndZDT = endZDT.withZoneSameInstant(EST_ZONE);
 
-        // Check if appointment falls on weekend
-        DayOfWeek startDay = estStartZDT.getDayOfWeek();
-        DayOfWeek endDay = estEndZDT.getDayOfWeek();
-        if (startDay == DayOfWeek.SATURDAY || startDay == DayOfWeek.SUNDAY ||
-                endDay == DayOfWeek.SATURDAY || endDay == DayOfWeek.SUNDAY) {
-            return false;
-        }
 
         // Check if appointment is within business hours
         LocalTime estStartTime = estStartZDT.toLocalTime();
@@ -80,8 +73,8 @@ public class AppointmentValidation {
                 LocalDateTime existingEnd = existing.getEnd();
 
                 // Check for overlaps
-                boolean overlaps = !(proposedEnd.isEqual(existingStart) || proposedEnd.isBefore(existingStart) ||
-                        proposedStart.isEqual(existingEnd) || proposedStart.isAfter(existingEnd));
+                boolean overlaps = !(proposedEnd.isBefore(existingStart) || proposedEnd.equals(existingStart) ||
+                        proposedStart.isAfter(existingEnd) || proposedStart.equals(existingEnd));
 
                 if (overlaps) {
                     return false;

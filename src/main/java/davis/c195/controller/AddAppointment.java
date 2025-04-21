@@ -131,7 +131,7 @@ public class AddAppointment implements Initializable {
             // Check if appointment is within business hours
             if (!AppointmentValidation.isWithinBusinessHours(startDateTime, endDateTime)) {
                 showAlert("Scheduling Error",
-                        "Appointments must be within business hours (8:00 AM to 10:00 PM EST), Monday through Friday.",
+                        "Appointments must be within business hours (8:00 AM to 10:00 PM EST).",
                         Alert.AlertType.ERROR);
                 return;
             }
